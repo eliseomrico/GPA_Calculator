@@ -22,8 +22,12 @@ def printClassTable(classes):
 
 def createCSV(classes):
 
+    print("Enter CSV filename without .csv extension: ", end='')
+    user_choice = input()
+    filename = user_choice+".csv"
+
     # Open a file in write mode
-    with open('transcript.csv', 'w') as file:
+    with open(filename, 'w') as file:
 
         # Headers
         file.write('CLASS_NAME,HOURS,NUMBER_GRADE,LETTER_GRADE,QUALITY_POINTS')
@@ -32,10 +36,30 @@ def createCSV(classes):
         for name,values in classes.items():
             file.write("\n{},{},{},{},{:.2f}".format(name,values["semester_hours"],values["grade"],values["letter_grade"],values["quality_points"]))
 
-def main():
+def importDataFromCSV():
 
-    # Get the number of classes
-    numOfClasses = getNumberOfClasses()
+    classes = {}
+
+    # Specify the file name
+    print("Enter filename without .csv extension: ", end='')
+    csv_file_path = input() + ".csv"
+
+    # Open the file in read mode
+    with open(csv_file_path, 'r') as csv_file:
+
+        # Create a CSV reader object
+        csv_reader = csv.reader(csv_file)
+
+        i = 0
+        for row in csv_reader:
+            if i != 0:
+                classes[row[0]] = { "semester_hours":float(row[1]),"grade":int(row[2]), "letter_grade": row[3], "quality_points": float(row[4]) }
+            i+=1
+
+    return classes
+
+
+def main():
 
 
     # Create class dict
@@ -43,19 +67,35 @@ def main():
 
 
     # Get Class Information
-    for x in range(numOfClasses):
-        print("\n==============================")
-        print(f"Class {x+1}")
-        print("\nEnter name: ",end='')
-        className = input()
-        print("Enter # of semester hours: ",end='')
-        semesterHours = float(input())
-        print("Enter grade: ",end ='')
-        grade = int(input())
-        print("\n==============================")
+    print("\nDo you want to import CSV data? ", end='')
+    choice = input()
 
-        # Add class entry to dict
-        classes[className] = {"semester_hours":semesterHours,"grade":grade, "quality_points": 0.00, "letter_grade": ""}
+
+    if choice == "y":
+
+        classes = importDataFromCSV()
+        
+    else:
+
+        numOfClasses = getNumberOfClasses()
+
+        for x in range(numOfClasses):
+
+            # Get the number of classes
+            
+
+            print("\n==============================")
+            print(f"Class {x+1}")
+            print("\nEnter name: ",end='')
+            className = input()
+            print("Enter # of semester hours: ",end='')
+            semesterHours = float(input())
+            print("Enter grade: ",end ='')
+            grade = int(input())
+            print("\n==============================")
+
+            # Add class entry to dict
+            classes[className] = {"semester_hours":semesterHours,"grade":grade, "quality_points": 0.00, "letter_grade": ""}
 
 
     # Add Quality Points
@@ -120,7 +160,7 @@ def main():
     print("Total semester hours: {:.2f}".format(total_semester_hours))
     print("Semester GPA: {:.2f}".format(gpa))
 
-
+    # Prompt user if they want to create a csv
     print("\nWould you like to create a CSV Transcript (y/n)? ", end='')
     user_choice = input()
 
@@ -131,7 +171,6 @@ def main():
 
     # Print ending space for cleaner look
     print("\n\n")
-
 
 
 if __name__ == "__main__":
