@@ -59,8 +59,28 @@ def importDataFromCSV():
     return classes
 
 
+def importSettings():
+
+    settings = {}    
+
+    # Open the file in read mode
+    with open('settings.csv', 'r') as csv_file:
+
+        # Create a CSV reader object
+        csv_reader = csv.reader(csv_file)
+
+        i = 0
+        for row in csv_reader:
+            if i != 0:
+                settings[row[0]] = { "grade_lower_bound":row[1], "grade_quality_points":row[2] }
+            i += 1
+
+    return settings
+
+
 def main():
 
+    settings = importSettings()
 
     # Create class dict
     classes = {}
@@ -71,6 +91,7 @@ def main():
     choice = input()
 
 
+    # Import CSV (Y or N)
     if choice == "y":
 
         classes = importDataFromCSV()
@@ -102,29 +123,29 @@ def main():
     for name,values in classes.items():
         grade = values["grade"]
 
-        if grade >= 95:
-            values["quality_points"] = 4.00
+        if grade >= int(settings["A"]["grade_lower_bound"]):
+            values["quality_points"] = int(settings["A"]["grade_quality_points"])
             values["letter_grade"]   = "A"
-        elif grade >= 90:
-            values["quality_points"] = 3.67
+        elif grade >= int(settings["A-"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["A-"]["grade_quality_points"])
             values["letter_grade"]   = "A-"
-        elif grade >= 87:
-            values["quality_points"] = 3.33
+        elif grade >= int(settings["B+"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["B+"]["grade_quality_points"])
             values["letter_grade"]   = "B+"
-        elif grade >= 84:
-            values["quality_points"] = 3.00
+        elif grade >= int(settings["B"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["B"]["grade_quality_points"])
             values["letter_grade"]   = "B"
-        elif grade >= 80:
-            values["quality_points"] = 2.67
+        elif grade >= int(settings["B-"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["B-"]["grade_quality_points"])
             values["letter_grade"]   = "B-"
-        elif grade >= 77:
-            values["quality_points"] = 2.33
+        elif grade >= int(settings["C+"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["C+"]["grade_quality_points"])
             values["letter_grade"]   = "C+"
-        elif grade >= 70:
-            values["quality_points"] = 2.00
+        elif grade >= int(settings["C"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["C"]["grade_quality_points"])
             values["letter_grade"]   = "C"
-        elif grade >= 60:
-            values["quality_points"] = 1.00
+        elif grade >= int(settings["D"]["grade_lower_bound"]):
+            values["quality_points"] = float(settings["D"]["grade_quality_points"])
             values["letter_grade"]   = "D"
         else:
             values["quality_points"] = 0.00
@@ -164,6 +185,7 @@ def main():
     print("\nWould you like to create a CSV Transcript (y/n)? ", end='')
     user_choice = input()
 
+    # Create a csv? (Y or N)
     if user_choice == "y":
         createCSV(classes)
         print("\nTrascript.csv created!")
@@ -171,7 +193,6 @@ def main():
 
     # Print ending space for cleaner look
     print("\n\n")
-
 
 if __name__ == "__main__":
     main()
